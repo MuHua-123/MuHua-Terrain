@@ -1,0 +1,11 @@
+{
+  "name": "com.muhua.uicontrol",
+  "version": "0.0.3",
+  "displayName": "MuHua UIControl",
+  "description": "\u57fa\u4e8eUI Toolkit\u7684\u81ea\u5b9a\u4e49\u63a7\u4ef6",
+  "author": {
+    "name": "MuHua",
+    "email": "2960208585@qq.com"
+  },
+  "type": "tool"
+}

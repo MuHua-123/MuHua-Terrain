@@ -1,0 +1,24 @@
+.scroll-view {
+    height: 100%;
+    width: 100%;
+    flex-direction: row;
+}
+
+.scroll-view-viewport {
+    width: 100%;
+    height: 100%;
+}
+
+.scroll-view-container {
+}
+
+.scroll-view-scroller {
+    height: 100%;
+    width: 30px;
+    background-color: rgb(255, 255, 255);
+}
+
+.scroll-view-dragger {
+    background-color: rgb(255, 134, 134);
+    height: 30px;
+}
