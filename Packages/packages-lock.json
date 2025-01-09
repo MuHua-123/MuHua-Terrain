@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.muhua.uicontrol": {
-      "version": "file:UIControl",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
     "com.unity.burst": {
       "version": "1.8.15",
       "depth": 1,
