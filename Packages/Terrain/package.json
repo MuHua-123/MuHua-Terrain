@@ -1,0 +1,15 @@
+{
+  "name": "muhua-terrain",
+  "version": "1.0.0",
+  "displayName": "MuHua Terrain",
+  "description": "\u57fa\u4e8eTerrain\u7684\u6269\u5c55\u5de5\u5177\u5305",
+  "author": {
+    "name": "MuHua",
+    "email": "muhua233@qq.com"
+  },
+  "type": "tool",
+  "dependencies": {
+    "com.unity.shadergraph": "14.0.11",
+    "com.unity.render-pipelines.core": "14.0.11"
+  }
+}

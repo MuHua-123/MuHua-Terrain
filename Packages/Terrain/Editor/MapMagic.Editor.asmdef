@@ -1,0 +1,20 @@
+{
+    "name": "MapMagic.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:10c2c8b9f42fe8c43bbe8dae22545979"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "!NET_STANDARD_2_0"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
