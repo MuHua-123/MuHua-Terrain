@@ -7,9 +7,5 @@
     "name": "MuHua",
     "email": "muhua233@qq.com"
   },
-  "type": "tool",
-  "dependencies": {
-    "com.unity.shadergraph": "14.0.11",
-    "com.unity.render-pipelines.core": "14.0.11"
-  }
+  "type": "tool"
 }

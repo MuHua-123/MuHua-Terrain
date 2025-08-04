@@ -1,0 +1,18 @@
+{
+    "name": "MuHuaEditor.Terrain",
+    "rootNamespace": "",
+    "references": [
+        "GUID:fefc70ff7b6589848877057f476f1d09"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,22 @@
+{
+    "name": "MapMagic.MicroSplat.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:10c2c8b9f42fe8c43bbe8dae22545979",
+        "GUID:b38a76144b6f25449ad861250a572252",
+        "GUID:b6b99efab1472174e8490b05f1c901a7"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "__MICROSPLAT__"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

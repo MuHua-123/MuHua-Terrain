@@ -1,0 +1,21 @@
+{
+    "name": "MapMagic.SplinePackage.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b64f3ffd7fb032748bfcfd4aa7d7cc24",
+        "GUID:b38a76144b6f25449ad861250a572252",
+        "GUID:10c2c8b9f42fe8c43bbe8dae22545979",
+        "GUID:7a1820f96260ad04591a40febe4f00d6"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
