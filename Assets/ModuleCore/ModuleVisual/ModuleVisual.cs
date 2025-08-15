@@ -15,8 +15,8 @@ public class ModuleVisual : ModuleSingle<ModuleVisual> {
 	// public VisualController<DataFashionUnit> FashionUnit;
 
 	[Header("生成器")]
-	public VisualGenerator<MonoMapUnit> GeneratorMapUnit;
-	// public VisualGenerator<MonoOrnament> Ornament;
+	public VisualGenerator<MapTile> GeneratorMapUnit;
+	public VisualGenerator<Building> GeneratorBuilding;
 	// public VisualGenerator<MonoLighting> Lighting;
 	// public VisualGenerator<MonoSymbol> Symbol;
 

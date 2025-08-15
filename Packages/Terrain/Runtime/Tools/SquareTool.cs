@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MuHua {
 	/// <summary>
-	/// 格子 - 工具
+	/// 正方形 - 工具
 	/// </summary>
-	public static class GridTool {
+	public static class SquareTool {
 		/// <summary> 格子坐标转世界坐标 </summary>
 		public static Vector3 GridToWorld(Vector2Int xy, float size) {
 			return new Vector3(xy.x, 0, xy.y) * size;
@@ -18,8 +18,8 @@ namespace MuHua {
 			return new Vector2Int(x, y);
 		}
 		/// <summary> 计算中心点 </summary>
-		public static Vector3 CenterPoint(Vector2Int xy, float size) {
-			return new Vector3(xy.x - 1, 0, xy.y - 1) * size * -0.5f;
+		public static Vector3 CenterPoint(int wide, int high, float size) {
+			return new Vector3(wide - 1, 0, high - 1) * size * -0.5f;
 		}
 	}
 }

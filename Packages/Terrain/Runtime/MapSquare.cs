@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MuHua {
 	/// <summary>
-	/// 格子 - 地图
+	/// 正方形 - 地图
 	/// </summary>
-	public class MapGrid : Map {
+	public class MapSquare : Map {
 
 		public const int MOVE_STRAIGHT_COST = 10;
 		public const int MOVE_DIAGONAL_COST = 14;
@@ -14,12 +14,12 @@ namespace MuHua {
 		/// <summary> 拐角处是否可步行 </summary>
 		public readonly bool isCornerWalkable;
 
-		public MapGrid(int wide, int high, float size, Vector3 originPosition, bool isCornerWalkable) : base(wide, high, size, originPosition) {
+		public MapSquare(int wide, int high, float size, Vector3 originPosition, bool isCornerWalkable) : base(wide, high, size, originPosition) {
 			this.isCornerWalkable = isCornerWalkable;
 		}
 
 		public override bool TryWorldPosition(Vector3 worldPosition, out Vector3 position) {
-			Vector2Int xy = GridTool.WorldToGrid(worldPosition - originPosition, size);
+			Vector2Int xy = SquareTool.WorldToGrid(worldPosition - originPosition, size);
 			return TryWorldPosition(xy, out position);
 		}
 		public override bool TryWorldPosition(Vector2Int xy, out Vector3 position) {
@@ -27,7 +27,7 @@ namespace MuHua {
 			return this.TryXY(xy.x, xy.y);
 		}
 		public override bool TryMapUnit(Vector3 worldPosition, out MapUnit unit) {
-			Vector2Int xy = GridTool.WorldToGrid(worldPosition - originPosition, size);
+			Vector2Int xy = SquareTool.WorldToGrid(worldPosition - originPosition, size);
 			return TryMapUnit(xy.x, xy.y, out unit);
 		}
 		public override bool FindPath(Vector3 sp, Vector3 ep, out List<Vector3> vectorPath) {
@@ -43,7 +43,7 @@ namespace MuHua {
 
 		/// <summary> 获取世界坐标 </summary>
 		public Vector3 GetWorldPosition(int x, int y) {
-			return GridTool.GridToWorld(new Vector2Int(x, y), size) + originPosition;
+			return SquareTool.GridToWorld(new Vector2Int(x, y), size) + originPosition;
 		}
 		/// <summary> 获取地图单元 </summary>
 		public bool TryMapUnit(int x, int y, out MapUnit unit) {

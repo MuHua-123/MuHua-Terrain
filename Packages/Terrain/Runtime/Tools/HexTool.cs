@@ -9,16 +9,16 @@ namespace MuHua {
 	public static class HexTool {
 		/// <summary> 格子坐标转世界坐标 </summary>
 		public static Vector3 HexToWorld(Vector2Int xy, float size) {
-			float width = size * 2f;
-			float height = Mathf.Sqrt(3f) * size;
+			float width = size;
+			float height = Mathf.Sqrt(3f) * size * 0.5f;
 			float offsetX = xy.x * (width * 0.75f);
 			float offsetY = xy.y * height + (xy.x % 2 == 0 ? 0 : height / 2f);
 			return new Vector3(offsetX, 0, offsetY);
 		}
 		/// <summary> 世界坐标转格子坐标 </summary>
 		public static Vector2Int WorldToHex(Vector3 worldPosition, float size) {
-			float width = size * 2f;
-			float height = Mathf.Sqrt(3f) * size;
+			float width = size;
+			float height = Mathf.Sqrt(3f) * size * 0.5f;
 			// 计算近似的x
 			int x = Mathf.RoundToInt(worldPosition.x / (width * 0.75f));
 			// 计算近似的y
@@ -27,11 +27,11 @@ namespace MuHua {
 			return new Vector2Int(x, y);
 		}
 		/// <summary> 计算中心点 </summary>
-		public static Vector3 CenterPoint(Vector2Int xy, float size) {
-			float width = size * 2f;
-			float height = size * Mathf.Sqrt(3f);
-			float x = -(xy.x - 1) * width * 0.75f * 0.5f;
-			float z = -(xy.y - 1) * height * 0.5f;
+		public static Vector3 CenterPoint(int wide, int high, float size) {
+			float width = size;
+			float height = size * Mathf.Sqrt(3f) * 0.5f;
+			float x = -(wide - 1) * width * 0.75f * 0.5f;
+			float z = -(high - 1) * height * 0.5f;
 			return new Vector3(x, 0, z);
 		}
 	}

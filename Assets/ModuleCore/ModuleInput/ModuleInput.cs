@@ -11,13 +11,13 @@ using MuHua;
 public class ModuleInput : ModuleSingle<ModuleInput> {
 
 	/// <summary> 当前输入模式 </summary>
-	public static EnumInputMode Current;
+	public static InputMode Current;
 	/// <summary> 回退输入模式 </summary>
-	public static EnumInputMode BackMode;
+	public static InputMode BackMode;
 	/// <summary> 鼠标指针位置 </summary>
 	public static Vector2 mousePosition;
 	/// <summary> 转换模式事件 </summary>
-	public static event Action<EnumInputMode> OnInputMode;
+	public static event Action<InputMode> OnInputMode;
 
 	private static bool isPointerOverUIObject;// 指针是否在UI上
 
@@ -25,7 +25,7 @@ public class ModuleInput : ModuleSingle<ModuleInput> {
 	public static bool IsPointerOverUIObject => isPointerOverUIObject;
 
 	/// <summary> 设置输入模式 </summary>
-	public static void Settings(EnumInputMode mode) {
+	public static void Settings(InputMode mode) {
 		BackMode = Current;
 		Current = mode;
 		OnInputMode?.Invoke(Current);
@@ -58,12 +58,13 @@ public class ModuleInput : ModuleSingle<ModuleInput> {
 /// <summary>
 /// 输入模式
 /// </summary>
-public enum EnumInputMode {
-	None,// 无
-
-	FashionDesign,// 服装设计
-
-	OrnamentDesign,// 配饰设计
-
-	FashionDisplay,// 服装展示
+public enum InputMode {
+	/// <summary> 无 </summary>
+	None,
+	/// <summary> 服装设计 </summary>
+	FashionDesign,
+	/// <summary> 配饰设计 </summary>
+	OrnamentDesign,
+	/// <summary> 服装展示 </summary>
+	FashionDisplay,
 }
