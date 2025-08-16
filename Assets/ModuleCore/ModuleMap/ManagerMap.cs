@@ -23,7 +23,7 @@ public class ManagerMap : ModuleSingle<ManagerMap> {
 	public void CreateMapSquare(int wide, int high, float size) {
 		mapType = MapType.Square;
 		Vector3 originPosition = SquareTool.CenterPoint(wide, high, size);
-		map = new MapSquare(wide, high, size, originPosition, true);
+		map = new MapSquare(wide, high, size, originPosition, false);
 		map.Loop(CreateVisualUnit);
 		OnCreate?.Invoke();
 	}
