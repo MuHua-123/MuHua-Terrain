@@ -7,6 +7,7 @@ namespace MuHua {
 	/// 六边形 - 工具
 	/// </summary>
 	public static class HexTool {
+
 		/// <summary> 格子坐标转世界坐标 </summary>
 		public static Vector3 HexToWorld(Vector2Int xy, float size) {
 			float width = size;
@@ -33,6 +34,20 @@ namespace MuHua {
 			float x = -(wide - 1) * width * 0.75f * 0.5f;
 			float z = -(high - 1) * height * 0.5f;
 			return new Vector3(x, 0, z);
+		}
+		/// <summary> 邻近位置 </summary>
+		public static List<Vector2Int> Neighbour(Vector2Int xy) {
+			int evenNumber = xy.x % 2 == 0 ? -1 : 1;
+			return new List<Vector2Int> {
+				new Vector2Int(xy.x + 0, xy.y + 1),
+				new Vector2Int(xy.x + 0, xy.y - 1),
+
+				new Vector2Int(xy.x + 1, xy.y + 0),
+				new Vector2Int(xy.x - 1, xy.y + 0),
+
+				new Vector2Int(xy.x + 1, xy.y + evenNumber),
+				new Vector2Int(xy.x - 1, xy.y + evenNumber)
+			};
 		}
 	}
 }

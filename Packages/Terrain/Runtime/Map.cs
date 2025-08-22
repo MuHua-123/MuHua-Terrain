@@ -37,7 +37,7 @@ namespace MuHua {
 		/// <summary> 世界坐标 </summary>
 		public abstract bool TryWorldPosition(Vector2Int xy, out Vector3 position);
 		/// <summary> 获取地图单元 </summary>
-		public abstract bool TryMapUnit(Vector3 worldPosition, out MapUnit unit);
+		public abstract bool FindUnit(Vector3 worldPosition, out MapUnit unit);
 		/// <summary> 查询地图路径 </summary>
 		public abstract bool FindPath(Vector3 sp, Vector3 ep, out List<Vector3> vectorPath);
 	}
@@ -52,6 +52,7 @@ namespace MuHua {
 		/// <summary> XY坐标 </summary>
 		public readonly Vector2Int xy;
 
+		public float ECost;
 		/// <summary> 起点节点到当前节点的实际成本 </summary>
 		public int GCost = 0;
 		/// <summary> 当前节点到目标节点的预估成本 </summary>
@@ -64,6 +65,8 @@ namespace MuHua {
 		/// <summary> 地图单元空间 </summary>
 		public MapUnitSpace mapSpace = null;
 
+		/// <summary> 额外移动成本 </summary>
+		public int MoveCost => mapSpace != null ? mapSpace.MoveCost : 0;
 		/// <summary> 是否可以行走 </summary>
 		public bool IsWalkable => mapSpace != null && mapSpace.IsWalkable;
 
@@ -73,6 +76,8 @@ namespace MuHua {
 	/// 地图单元空间
 	/// </summary>
 	public abstract class MapUnitSpace {
+		/// <summary> 额外移动成本 </summary>
+		public virtual int MoveCost { get => 0; }
 		/// <summary> 是否可以行走 </summary>
 		public abstract bool IsWalkable { get; }
 	}

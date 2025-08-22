@@ -51,7 +51,7 @@ public class ManagerMap : ModuleSingle<ManagerMap> {
 	}
 	/// <summary> 获取地图单元 </summary>
 	public static bool TryMapUnit(Vector3 worldPosition, out MapUnit unit) {
-		return I.map.TryMapUnit(worldPosition, out unit);
+		return I.map.FindUnit(worldPosition, out unit);
 	}
 	/// <summary> 查询地图路径 </summary>
 	public static bool FindPath(Vector3 sp, Vector3 ep, out List<Vector3> vectorPath) {
