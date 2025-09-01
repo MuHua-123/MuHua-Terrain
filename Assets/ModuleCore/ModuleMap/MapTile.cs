@@ -23,9 +23,9 @@ public class MapTile : MonoBehaviour {
 	}
 
 	private void LateUpdate() {
-		gText.text = unit.GCost < int.MaxValue - 1 ? unit.GCost.ToString() : "0";
-		hText.text = unit.HCost < int.MaxValue - 1 ? unit.HCost.ToString() : "0";
-		fText.text = unit.FCost < int.MaxValue - 1 ? unit.FCost.ToString() : "0";
+		gText.text = Mathf.Abs(unit.GCost) < 10000 ? unit.GCost.ToString() : "0";
+		hText.text = Mathf.Abs(unit.HCost) < 10000 ? unit.HCost.ToString() : "0";
+		fText.text = Mathf.Abs(unit.FCost) < 10000 ? unit.FCost.ToString() : "0";
 		xyText.text = unit.xy.ToString();
 	}
 }

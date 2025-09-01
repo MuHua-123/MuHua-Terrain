@@ -61,10 +61,8 @@ public class ModuleInput : ModuleSingle<ModuleInput> {
 public enum InputMode {
 	/// <summary> 无 </summary>
 	None,
-	/// <summary> 服装设计 </summary>
-	FashionDesign,
-	/// <summary> 配饰设计 </summary>
-	OrnamentDesign,
-	/// <summary> 服装展示 </summary>
-	FashionDisplay,
+	/// <summary> 建筑 </summary>
+	Building,
+	/// <summary> 寻路 </summary>
+	PathFind,
 }
