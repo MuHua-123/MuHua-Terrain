@@ -32,7 +32,7 @@ public class MapIndicate : MonoBehaviour {
 	private void Update() {
 		bool isShow = TryWorldPosition(out Vector3 position);
 		transform.position = position;
-		indicate.SetActive(indicate);
+		indicate.SetActive(isShow);
 	}
 
 	/// <summary> 获取地图格子坐标 </summary>

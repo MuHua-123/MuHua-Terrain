@@ -35,13 +35,43 @@ namespace MuHua {
 			return vectorPath != null && vectorPath.Count > 0;
 		}
 
-		public Vector3 GetWorldPosition(int x, int y) {
+		#region 坐标转换
+		/// <summary> 获取世界坐标 </summary>
+		public virtual Vector3 GetWorldPosition(int x, int y) {
 			return HexTool.HexToWorld(new Vector2Int(x, y), size) + originPosition;
 		}
+		#endregion
+
+		#region 查询单元
+		/// <summary> 查询节点 </summary>
+		public virtual bool FindUnit(Vector2Int xy, out MapUnit unit) {
+			return FindUnit(xy.x, xy.y, out unit);
+		}
+		/// <summary> 查询节点 </summary>
+		public virtual bool FindUnit(int x, int y, out MapUnit unit) {
+			x = Mathf.Clamp(x, 0, wide - 1);
+			y = Mathf.Clamp(y, 0, high - 1);
+			unit = unitArray[x, y];
+			return this.TryXY(x, y);
+		}
+		// 六边形相邻节点查找
+		public virtual List<MapUnit> FindNeighbour(int x, int y) {
+			return FindUnits(HexTool.Neighbour(new Vector2Int(x, y)));
+		}
+		/// <summary> 查询节点 </summary>
+		public virtual List<MapUnit> FindUnits(List<Vector2Int> directions) {
+			List<MapUnit> neighbourList = new List<MapUnit>();
+			for (int i = 0; i < directions.Count; i++) {
+				Vector2Int xy = directions[i];
+				if (FindUnit(xy.x, xy.y, out MapUnit unit)) { neighbourList.Add(unit); }
+			}
+			return neighbourList;
+		}
+		#endregion
 
 		#region 路径查询
 		/// <summary> 查询路径 </summary>
-		public List<Vector3> FindPath(MapUnit sMapUnit, MapUnit eMapUnit) {
+		public virtual List<Vector3> FindPath(MapUnit sMapUnit, MapUnit eMapUnit) {
 			this.Loop((x, y) => { unitArray[x, y].InitializationCost(); });
 
 			sMapUnit.GCost = 0;
@@ -60,7 +90,8 @@ namespace MuHua {
 			}
 			return null;
 		}
-		public int CalculateDistanceCost(MapUnit a, MapUnit b) {
+		/// <summary> 计算距离h成本 </summary>
+		public virtual int CalculateDistanceCost(MapUnit a, MapUnit b) {
 			// 六边形距离计算（曼哈顿距离）
 			// int dx = Mathf.Abs(a.x - b.x);
 			// int dy = Mathf.Abs(a.y - b.y);
@@ -69,7 +100,7 @@ namespace MuHua {
 			return Mathf.RoundToInt(MOVE_COST * Vector2Int.Distance(a.xy, b.xy));
 		}
 		/// <summary> 获得最小f成本 </summary>
-		public MapUnit GetLowestFCostNode(List<MapUnit> openList) {
+		public virtual MapUnit GetLowestFCostNode(List<MapUnit> openList) {
 			MapUnit lowestFCostNode = openList[0];
 			for (int i = 0; i < openList.Count; i++) {
 				if (openList[i].FCost >= lowestFCostNode.FCost) { continue; }
@@ -78,12 +109,12 @@ namespace MuHua {
 			return lowestFCostNode;
 		}
 		/// <summary> 计算临近节点 </summary>
-		public void CalculateNeighbour(List<MapUnit> openList, List<MapUnit> closeList, MapUnit currentNode, MapUnit endNode) {
+		public virtual void CalculateNeighbour(List<MapUnit> openList, List<MapUnit> closeList, MapUnit currentNode, MapUnit endNode) {
 			List<MapUnit> neighbourList = FindNeighbour(currentNode.x, currentNode.y);
 			neighbourList.ForEach(node => CalculateNeighbour(openList, closeList, node, currentNode, endNode));
 		}
 		/// <summary> 计算临近节点 </summary>
-		public void CalculateNeighbour(List<MapUnit> openList, List<MapUnit> closeList, MapUnit neighbourNode, MapUnit currentNode, MapUnit endNode) {
+		public virtual void CalculateNeighbour(List<MapUnit> openList, List<MapUnit> closeList, MapUnit neighbourNode, MapUnit currentNode, MapUnit endNode) {
 			//如果临近节点在关闭列表则跳过
 			if (closeList.Contains(neighbourNode)) { return; }
 			//如果节点不可通行则添加到关闭列表
@@ -98,7 +129,7 @@ namespace MuHua {
 			if (!openList.Contains(neighbourNode)) { openList.Add(neighbourNode); }
 		}
 		/// <summary> 返回最终路径 </summary>
-		public List<Vector3> CalculatePath(MapUnit endNode) {
+		public virtual List<Vector3> CalculatePath(MapUnit endNode) {
 			List<Vector3> finalPath = new List<Vector3>();
 			MapUnit currentNode = endNode;
 			while (currentNode.cameFromNode != null) {
@@ -108,33 +139,6 @@ namespace MuHua {
 			finalPath.Add(GetWorldPosition(currentNode.x, currentNode.y));
 			finalPath.Reverse();
 			return finalPath;
-		}
-		#endregion
-
-		#region 查询单元
-		/// <summary> 查询节点 </summary>
-		public bool FindUnit(Vector2Int xy, out MapUnit unit) {
-			return FindUnit(xy.x, xy.y, out unit);
-		}
-		/// <summary> 查询节点 </summary>
-		public bool FindUnit(int x, int y, out MapUnit unit) {
-			x = Mathf.Clamp(x, 0, wide - 1);
-			y = Mathf.Clamp(y, 0, high - 1);
-			unit = unitArray[x, y];
-			return this.TryXY(x, y);
-		}
-		// 六边形相邻节点查找
-		public List<MapUnit> FindNeighbour(int x, int y) {
-			return FindUnits(HexTool.Neighbour(new Vector2Int(x, y)));
-		}
-		/// <summary> 查询节点 </summary>
-		public List<MapUnit> FindUnits(List<Vector2Int> directions) {
-			List<MapUnit> neighbourList = new List<MapUnit>();
-			for (int i = 0; i < directions.Count; i++) {
-				Vector2Int xy = directions[i];
-				if (FindUnit(xy.x, xy.y, out MapUnit unit)) { neighbourList.Add(unit); }
-			}
-			return neighbourList;
 		}
 		#endregion
 	}
