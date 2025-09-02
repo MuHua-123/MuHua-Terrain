@@ -36,5 +36,10 @@ public class InputBuilding : InputControl {
 		index++;
 		BuildingSystem.I.Settings(AssetsManager.I.FindBuilding(index));
 	}
+	/// <summary> Tab </summary>
+	public void OnSwitchMode(InputValue inputValue) {
+		if (ModuleInput.Current == InputMode.Building) { ModuleInput.Settings(InputMode.PathFind); return; }
+		if (ModuleInput.Current == InputMode.PathFind) { ModuleInput.Settings(InputMode.Building); return; }
+	}
 	#endregion
 }

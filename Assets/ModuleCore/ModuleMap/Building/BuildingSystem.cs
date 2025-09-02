@@ -34,7 +34,7 @@ public class BuildingSystem : ModuleSingle<BuildingSystem> {
 	/// <summary> 建造 </summary>
 	public void Build() {
 		// 检查建筑是否可用
-		if (building == null) { return; }
+		if (building == null) { Debug.Log($"没有可用建筑!"); return; }
 		// 判断是否在地图范围内
 		if (!TryMapUnit(building.Occupy(), out List<MapUnit> mapUnits)) { return; }
 		// 生成建筑
@@ -67,13 +67,21 @@ public class BuildingSystem : ModuleSingle<BuildingSystem> {
 	}
 	/// <summary> 判断建筑空间 </summary>
 	private bool TryMapUnit(Vector3 position, out MapUnit mapUnit) {
-		mapUnit = null;
 		// 判断是否在地图范围内
-		if (!ManagerMap.TryMapUnit(position, out MapUnit unit)) { return false; }
+		if (!ManagerMap.TryMapUnit(position, out mapUnit)) {
+			Debug.Log($"建筑不在地图范围内!{position}");
+			return false;
+		}
 		// 判断建筑空间
-		if (!(unit.mapSpace is BuildingSpace buildingSpace)) { return false; }
+		if (!(mapUnit.mapSpace is BuildingSpace buildingSpace)) {
+			Debug.Log($"没有建筑空间!{mapUnit.xy}");
+			return false;
+		}
 		// 判断是否有建筑
-		if (buildingSpace.building != null) { return false; }
+		if (buildingSpace.building != null) {
+			Debug.Log($"已存在建筑!{mapUnit.xy} {buildingSpace.building.name}");
+			return false;
+		}
 		return true;
 	}
 	/// <summary> 记录建筑 </summary>
