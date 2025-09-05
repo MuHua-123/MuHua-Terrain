@@ -24,7 +24,7 @@ namespace MuHua {
 		}
 		public override bool FindUnit(Vector3 worldPosition, out MapUnit unit) {
 			Vector2Int xy = HexTool.WorldToHex(worldPosition - originPosition, size);
-			return FindUnit(xy.x, xy.y, out unit);
+			return FindUnit(xy, out unit);
 		}
 		public override bool FindPath(Vector3 sp, Vector3 ep, out List<Vector3> vectorPath) {
 			vectorPath = new List<Vector3>();
@@ -45,14 +45,14 @@ namespace MuHua {
 		#region 查询单元
 		/// <summary> 查询节点 </summary>
 		public virtual bool FindUnit(Vector2Int xy, out MapUnit unit) {
-			return FindUnit(xy.x, xy.y, out unit);
+			unit = FindUnit(xy.x, xy.y);
+			return this.TryXY(xy.x, xy.y);
 		}
 		/// <summary> 查询节点 </summary>
-		public virtual bool FindUnit(int x, int y, out MapUnit unit) {
+		public virtual MapUnit FindUnit(int x, int y) {
 			x = Mathf.Clamp(x, 0, wide - 1);
 			y = Mathf.Clamp(y, 0, high - 1);
-			unit = unitArray[x, y];
-			return this.TryXY(x, y);
+			return unitArray[x, y];
 		}
 		// 六边形相邻节点查找
 		public virtual List<MapUnit> FindNeighbour(int x, int y) {
@@ -63,7 +63,7 @@ namespace MuHua {
 			List<MapUnit> neighbourList = new List<MapUnit>();
 			for (int i = 0; i < directions.Count; i++) {
 				Vector2Int xy = directions[i];
-				if (FindUnit(xy.x, xy.y, out MapUnit unit)) { neighbourList.Add(unit); }
+				if (FindUnit(xy, out MapUnit unit)) { neighbourList.Add(unit); }
 			}
 			return neighbourList;
 		}
