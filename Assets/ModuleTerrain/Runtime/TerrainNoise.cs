@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 柏林噪点
+/// 地形柏林噪点
 /// </summary>
-public class PerlinNoise {
-
+public class TerrainNoise {
 	/// <summary> 宽 </summary>
 	public int wide = 100;
 	/// <summary> 高 </summary>
@@ -32,7 +31,7 @@ public class PerlinNoise {
 	/// <summary> 梯度采样偏移 </summary>
 	private Vector2[] octaveOffsets = new Vector2[0];
 
-	public PerlinNoise(int wide, int high, float scale, int octaves, float persistance, float lacunarity) {
+	public TerrainNoise(int wide, int high, float scale, int octaves, float persistance, float lacunarity) {
 		this.wide = wide;
 		this.high = high;
 		this.scale = scale;
@@ -41,7 +40,7 @@ public class PerlinNoise {
 		this.lacunarity = lacunarity;
 	}
 	/// <summary> 生成噪点图 </summary> 
-	public float[,] GenerateNoiseMap(int seed, Vector3 offset) {
+	public float[,] GenerateNoiseMap(int seed, Vector2 offset) {
 		float[,] noiseMap = new float[wide, high];
 
 		System.Random prng = new System.Random(seed);
@@ -65,24 +64,25 @@ public class PerlinNoise {
 		return noiseMap;
 	}
 	/// <summary> 生成纹理图 </summary> 
-	public Texture2D GenerateTexture(int seed, Vector3 offset) {
+	public Texture2D GenerateTexture(int seed, Vector2 offset) {
 		float[,] noiseMap = GenerateNoiseMap(seed, offset);
 		// 生成颜色
 		Color[] colors = new Color[wide * high];
 		Loop((x, y) => colors[y * wide + x] = Color.Lerp(Color.black, Color.white, noiseMap[x, y]));
 		// 生成纹理
 		Texture2D texture = new Texture2D(wide, high);
+		texture.filterMode = FilterMode.Point;
 		texture.SetPixels(colors);
 		texture.Apply();
 		return texture;
 	}
-
 	/// <summary> 循环 </summary>
-	private void Loop(Action<int, int> action) {
+	public void Loop(Action<int, int> action) {
 		for (int y = 0; y < high; y++) {
 			for (int x = 0; x < wide; x++) { action?.Invoke(x, y); }
 		}
 	}
+
 	/// <summary> 生成单个噪点 </summary>  
 	private float Generate(int x, int y) {
 		float amplitude = 1;
@@ -100,12 +100,8 @@ public class PerlinNoise {
 			frequency *= lacunarity;
 		}
 
-		if (noiseHeight > maxHigh) {
-			maxHigh = noiseHeight;
-		}
-		else if (noiseHeight < minHigh) {
-			minHigh = noiseHeight;
-		}
+		if (noiseHeight > maxHigh) { maxHigh = noiseHeight; }
+		if (noiseHeight < minHigh) { minHigh = noiseHeight; }
 
 		return noiseHeight;
 	}
