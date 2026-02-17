@@ -7,16 +7,18 @@ using UnityEngine;
 /// 地形渲染器
 /// </summary>
 [RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class TerrainRenderer : MonoBehaviour {
-	/// <summary> 网格过滤器 </summary>
-	public MeshFilter meshFilter;
 	/// <summary> 地形数据 </summary>
 	public TerrainData terrainData;
-	/// <summary> 地形图 </summary>
-	public TerrainMap terrainMap;
+	/// <summary> 网格过滤器 </summary>
+	public MeshFilter meshFilter;
+	/// <summary> 网格渲染器 </summary>
+	public MeshRenderer meshRenderer;
 
 	private void Reset() {
 		name = Guid.NewGuid().ToString("N");
 		meshFilter = GetComponent<MeshFilter>();
+		meshRenderer = GetComponent<MeshRenderer>();
 	}
 }

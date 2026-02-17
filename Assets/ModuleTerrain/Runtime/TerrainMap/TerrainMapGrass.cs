@@ -5,21 +5,41 @@ using Unity.Jobs;
 using UnityEngine;
 
 /// <summary>
-/// 地形图 - 草地
+/// 草地 - 地形图
 /// </summary>
 [CreateAssetMenu(fileName = "TerrainMapGrass", menuName = "MuHua/地形/地形纹理/草地")]
 public class TerrainMapGrass : TerrainMap {
+	/// <summary> 宽 </summary>
+	public int wide = 512;
+	/// <summary> 高 </summary>
+	public int high = 512;
 
-	public override Texture2D Get(TerrainMeshData meshData) {
-		Texture2D texture = new Texture2D(wide, high);
-		return Get(texture, meshData);
+	[Header("材质")]
+	/// <summary> 着色器 </summary>
+	public Shader shader;
+	/// <summary> 主纹理 </summary>
+	public Texture2D MainTex;
+	/// <summary> 法线 </summary>
+	public Texture2D Normal;
+	/// <summary> 偏移 </summary>
+	public Vector2 Scale;
+
+	public override Material Get(Texture2D mask, Material material) {
+		if (material == null) { material = new Material(shader); }
+		material.SetTexture("_Mask", mask);
+		material.SetTexture("_MainTex", MainTex);
+		material.SetTextureScale("_MainTex", Scale);
+		material.SetTexture("_Normal", Normal);
+		material.SetTextureScale("_Normal", Scale);
+		return material;
 	}
 
-	public override Texture2D Get(Texture2D texture, TerrainMeshData meshData) {
+	public override Texture2D Get(TerrainMeshData meshData, Texture2D texture = null) {
+		if (texture == null) { texture = new Texture2D(this.wide, this.high); }
 		int wide = texture.width;
 		int high = texture.height;
 		// 创建数据数组
-		NativeArray<float> alphas = new NativeArray<float>(wide * high, Allocator.TempJob);
+		NativeArray<Color32> colors = new NativeArray<Color32>(wide * high, Allocator.TempJob);
 		NativeArray<Vector3> normals = new NativeArray<Vector3>(meshData.normals, Allocator.TempJob);
 		// 创建并调度并行Job
 		ParallelJob job = new ParallelJob {
@@ -29,24 +49,19 @@ public class TerrainMapGrass : TerrainMap {
 			meshHigh = meshData.high,
 			meshScale = meshData.scale,
 			normals = normals,
-			alphas = alphas,
+			colors = colors,
 		};
 		// 64是批处理大小
-		JobHandle handle = job.Schedule(alphas.Length, 64);
+		JobHandle handle = job.Schedule(colors.Length, 64);
 		// 等待Job完成
 		handle.Complete();
-		// 获取颜色
-		Color32[] colors = new Color32[wide * high];
-		for (int i = 0; i < alphas.Length; i++) {
-			colors[i] = new Color(0, 0, 0, alphas[i]);
-		}
+		// 写入纹理
+		texture.SetPixels32(colors.ToArray());
+		texture.wrapMode = TextureWrapMode.Clamp;
+		texture.Apply();
 		// 释放内存
 		normals.Dispose();
-		alphas.Dispose();
-		// 构建纹理（确保贴图保持可读，因为我们会把它作为 sub-asset 存储并在后面更新）
-		texture.SetPixels32(colors);
-		// 不要在这里设置 makeNoLongerReadable = true，否则被保存为 sub-asset 后就无法再次写入
-		texture.Apply(updateMipmaps: false, makeNoLongerReadable: false);
+		colors.Dispose();
 		return texture;
 	}
 
@@ -64,7 +79,7 @@ public class TerrainMapGrass : TerrainMap {
 		/// <summary> 网格法线 </summary>
 		[ReadOnly] public NativeArray<Vector3> normals;
 		/// <summary> 返回结果 </summary>
-		public NativeArray<float> alphas;
+		public NativeArray<Color32> colors;
 
 		public void Execute(int index) {
 			int x = index % wide;
@@ -80,7 +95,7 @@ public class TerrainMapGrass : TerrainMap {
 			Vector3 n = normals[meshIndex];
 			// 取值
 			float alpha = (n.y - 0.8f) * 8;
-			alphas[index] = Mathf.Clamp01(alpha);
+			colors[index] = new Color(0, 0, 0, Mathf.Clamp01(alpha));
 		}
 	}
 }
