@@ -77,6 +77,12 @@ public class TerrainRendererEditor : Editor {
 		var textures = AssetDatabase.LoadAllAssetsAtPath(path).OfType<Texture2D>();
 		Texture2D texture = textures.FirstOrDefault(obj => obj.name == value.name);
 
+		// 获取纹理的导入设置
+		// string texturePath = AssetDatabase.GetAssetPath(texture);
+		// TextureImporter importer = AssetImporter.GetAtPath(texturePath) as TextureImporter;
+		// importer.isReadable = true;
+		// AssetDatabase.ImportAsset(texturePath, ImportAssetOptions.ForceUpdate);
+
 		Debug.Log("Time耗时: " + (Time.realtimeSinceStartup - startTime) * 1000 + " ms");
 		startTime = Time.realtimeSinceStartup;
 
@@ -91,14 +97,13 @@ public class TerrainRendererEditor : Editor {
 		Debug.Log("Time耗时: " + (Time.realtimeSinceStartup - startTime) * 1000 + " ms");
 		startTime = Time.realtimeSinceStartup;
 
-		// 创建新的或者更新
-		if (texture == null) {
+		// 创建新的
+		// if (texture != null) { Undo.DestroyObjectImmediate(texture); }
+		if (texture != null) { terrainMap.Get(texture, meshData); }
+		else {
 			texture = terrainMap.Get(meshData);
 			texture.name = value.name;
 			AssetDatabase.AddObjectToAsset(texture, terrainMap);
-		}
-		else {
-			terrainMap.Get(texture, meshData);
 		}
 
 		Debug.Log("Time耗时: " + (Time.realtimeSinceStartup - startTime) * 1000 + " ms");

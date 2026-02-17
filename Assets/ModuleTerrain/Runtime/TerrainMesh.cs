@@ -80,6 +80,8 @@ public class TerrainMeshData {
 	public Vector2[] uvs;
 	/// <summary> 顶点 </summary>
 	public Vector3[] vertices;
+	/// <summary> 法线 </summary>
+	public Vector3[] normals;
 
 	public TerrainMeshData(int wide, int high, float scale) {
 		this.wide = wide;
@@ -103,6 +105,7 @@ public class TerrainMeshData {
 		mesh.triangles = triangles;
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
+		normals = mesh.normals;
 		return mesh;
 	}
 	/// <summary> 添加顶点 </summary> 
