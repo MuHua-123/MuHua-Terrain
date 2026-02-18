@@ -21,24 +21,16 @@ public class TerrainRendererEditor : Editor {
 		GUILayout.Space(10); // 增加10像素的空白
 
 		if (GUILayout.Button("生成地形")) { GenerateTerrain(); }
-		// if (GUILayout.Button("生成遮罩")) { GenerateMap(); }
 	}
 
 	/// <summary> 创建地形 </summary>
 	private void GenerateTerrain() {
 		TerrainData terrainData = value.terrainData;
 		if (terrainData == null) { return; }
-		TerrainMesh terrainMesh = terrainData.terrainMesh;
-		if (terrainMesh == null) { return; }
-
-		// 生成网格数据
-		Vector3 position = value.transform.position;
-		TerrainNoise terrainNoise = terrainData.GenerateNoise();
-		TerrainMeshData meshData = terrainMesh.Get(terrainNoise, position);
 
 		// 生成网格
-		Mesh mesh = GenerateTerrain(terrainMesh, meshData);
-		value.meshFilter.mesh = mesh;
+		TerrainMesh meshData = GenerateMesh(terrainData);
+		value.meshFilter.mesh = meshData.mesh;
 
 		// 生成材质
 		List<Material> materials = new List<Material>();
@@ -56,17 +48,29 @@ public class TerrainRendererEditor : Editor {
 	}
 
 	/// <summary> 创建地形 </summary>
-	private Mesh GenerateTerrain(TerrainMesh terrainMesh, TerrainMeshData meshData) {
-		Mesh mesh = Find<Mesh>(terrainMesh, value.name);
+	private TerrainMesh GenerateMesh(TerrainData terrainData) {
+		// 查找网格数据
+		TerrainMesh meshData = Find<TerrainMesh>(terrainData, value.name);
+		if (meshData == null) {
+			meshData = terrainData.GenerateMesh();
+			meshData.name = value.name;
+			AssetDatabase.AddObjectToAsset(meshData, terrainData);
+		}
+		// 初始网格数据
+		Vector3 position = value.transform.position;
+		TerrainNoise terrainNoise = terrainData.GenerateNoise();
+		meshData.Initial(terrainNoise, position);
+		// 生成网格
+		Mesh mesh = Find<Mesh>(terrainData, value.name);
 		if (mesh != null) { Undo.DestroyObjectImmediate(mesh); }
 		mesh = meshData.Get();
 		mesh.name = value.name;
-		AssetDatabase.AddObjectToAsset(mesh, terrainMesh);
-		EditorUtility.SetDirty(terrainMesh);
-		return mesh;
+		AssetDatabase.AddObjectToAsset(mesh, terrainData);
+		EditorUtility.SetDirty(terrainData);
+		return meshData;
 	}
 	/// <summary> 生成遮罩图 </summary>
-	private Material GenerateMap(TerrainMeshData meshData, TerrainMap terrainMap) {
+	private Material GenerateMap(TerrainMesh meshData, TerrainMap terrainMap) {
 		// 获得遮罩
 		Texture2D texture = Find<Texture2D>(terrainMap, value.name);
 		if (texture == null) {

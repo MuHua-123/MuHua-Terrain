@@ -9,6 +9,7 @@ using UnityEngine;
 /// </summary>
 [CreateAssetMenu(fileName = "TerrainMapGrass", menuName = "MuHua/地形/地形纹理/草地")]
 public class TerrainMapGrass : TerrainMap {
+	[Header("纹理")]
 	/// <summary> 宽 </summary>
 	public int wide = 512;
 	/// <summary> 高 </summary>
@@ -34,13 +35,13 @@ public class TerrainMapGrass : TerrainMap {
 		return material;
 	}
 
-	public override Texture2D Get(TerrainMeshData meshData, Texture2D texture = null) {
+	public override Texture2D Get(TerrainMesh meshData, Texture2D texture = null) {
 		if (texture == null) { texture = new Texture2D(this.wide, this.high); }
 		int wide = texture.width;
 		int high = texture.height;
 		// 创建数据数组
 		NativeArray<Color32> colors = new NativeArray<Color32>(wide * high, Allocator.TempJob);
-		NativeArray<Vector3> normals = new NativeArray<Vector3>(meshData.normals, Allocator.TempJob);
+		NativeArray<Vector3> normals = new NativeArray<Vector3>(meshData.mesh.normals, Allocator.TempJob);
 		// 创建并调度并行Job
 		ParallelJob job = new ParallelJob {
 			wide = wide,

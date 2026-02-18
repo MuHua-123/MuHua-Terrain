@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 [CreateAssetMenu(fileName = "TerrainMapDirt", menuName = "MuHua/地形/地形纹理/泥地")]
 public class TerrainMapDirt : TerrainMap {
+	[Header("纹理")]
 	/// <summary> 宽 </summary>
 	public int wide = 512;
 	/// <summary> 高 </summary>
@@ -33,7 +34,7 @@ public class TerrainMapDirt : TerrainMap {
 		return material;
 	}
 
-	public override Texture2D Get(TerrainMeshData meshData, Texture2D texture = null) {
+	public override Texture2D Get(TerrainMesh meshData, Texture2D texture = null) {
 		if (texture == null) { texture = new Texture2D(this.wide, this.high); }
 		int wide = texture.width;
 		int high = texture.height;
