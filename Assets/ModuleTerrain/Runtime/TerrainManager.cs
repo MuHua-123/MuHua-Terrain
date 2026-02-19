@@ -10,11 +10,13 @@ using Den.Tools;
 public class TerrainManager : ModuleSingle<TerrainManager> {
 	/// <summary> 区块大小 </summary>
 	public Vector2Int blockSize;
+	/// <summary> 地形数据 </summary>
+	public TerrainData terrainData;
 
 	protected override void Awake() => NoReplace();
 
 	/// <summary> 生成 </summary>
-	public void Generate() {
+	// public void Generate() {
 
-	}
+	// }
 }
