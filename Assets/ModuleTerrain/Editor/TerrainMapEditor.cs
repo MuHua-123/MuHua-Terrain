@@ -18,21 +18,21 @@ public class TerrainMapEditor : Editor {
 		base.OnInspectorGUI();
 		GUILayout.Space(10); // 增加10像素的空白
 
-		if (GUILayout.Button("清除资源")) { ClearAssets(); }
+		if (GUILayout.Button("清除资源")) { ClearAssets(value); }
 	}
 
 	/// <summary> 清除资源 </summary>
-	private void ClearAssets() {
+	public static void ClearAssets(Object obj) {
 		// 获取路径
-		string path = AssetDatabase.GetAssetPath(value);
+		string path = AssetDatabase.GetAssetPath(obj);
 		// 查找网格
 		Object[] list = AssetDatabase.LoadAllAssetsAtPath(path);
 		// 删除资源
 		for (int i = 0; i < list.Length; i++) {
-			if (list[i] == value) { continue; }
+			if (list[i] == obj) { continue; }
 			Undo.DestroyObjectImmediate(list[i]);
 		}
-		EditorUtility.SetDirty(value);
+		EditorUtility.SetDirty(obj);
 		AssetDatabase.SaveAssets();
 	}
 }

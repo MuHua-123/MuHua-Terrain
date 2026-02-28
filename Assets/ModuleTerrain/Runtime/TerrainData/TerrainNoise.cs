@@ -16,12 +16,22 @@ public class TerrainNoise {
 	public int octaves = 4;
 	/// <summary> 增加偏移，防止镜像 </summary>
 	public Vector2 offset = new Vector2(100000f, 100000f);
+	/// <summary> 种子 </summary>
+	public Vector2[] offsets = new Vector2[0];
 
-	public TerrainNoise(float frequency, float amplitude, float noiseScale, int octaves) {
+	public TerrainNoise(int seed, float frequency, float amplitude, float noiseScale, int octaves) {
 		this.frequency = frequency;
 		this.amplitude = amplitude;
 		this.noiseScale = noiseScale;
 		this.octaves = octaves;
+
+		offsets = new Vector2[octaves];
+		System.Random prng = new System.Random(seed);
+		for (int i = 0; i < octaves; i++) {
+			float offsetX = prng.Next(-100000, 100000);
+			float offsetY = prng.Next(-100000, 100000);
+			offsets[i] = new Vector2(offsetX, offsetY);
+		}
 	}
 
 	/// <summary> 获取高度 </summary> 
@@ -29,16 +39,16 @@ public class TerrainNoise {
 		float max = 0;
 		float noiseHeight = 0;
 		for (int i = 0; i < octaves; i++) {
-			noiseHeight += Get(x, y, i);
+			noiseHeight += Get(x, y, i, offsets[i]);
 			max += Mathf.Pow(amplitude, i);
 		}
 		return Mathf.InverseLerp(-max, max, noiseHeight);
 	}
 
 	/// <summary> 获取高度 </summary>
-	private float Get(float x, float y, float p) {
-		float sampleX = (x + offset.x) * Mathf.Pow(frequency, p) / noiseScale;
-		float sampleY = (y + offset.y) * Mathf.Pow(frequency, p) / noiseScale;
+	private float Get(float x, float y, float p, Vector2 seed) {
+		float sampleX = (x + seed.x + offset.x) * Mathf.Pow(frequency, p) / noiseScale;
+		float sampleY = (y + seed.y + offset.y) * Mathf.Pow(frequency, p) / noiseScale;
 		float perlinValue = Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1;
 		return perlinValue * Mathf.Pow(amplitude, p);
 	}

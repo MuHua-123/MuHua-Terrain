@@ -20,27 +20,24 @@ public class TerrainRendererEditor : Editor {
 		base.OnInspectorGUI();
 		GUILayout.Space(10); // 增加10像素的空白
 
-		if (GUILayout.Button("生成地形")) { GenerateTerrain(); }
+		if (GUILayout.Button("生成地形")) { GenerateTerrain(value); }
 	}
 
 	/// <summary> 创建地形 </summary>
-	private void GenerateTerrain() {
+	public static void GenerateTerrain(TerrainRenderer value) {
 		TerrainData terrainData = value.terrainData;
 		if (terrainData == null) { return; }
-
 		// 生成网格
-		TerrainMesh meshData = GenerateMesh(terrainData);
+		TerrainMesh meshData = GenerateMesh(value, terrainData);
 		value.meshFilter.mesh = meshData.mesh;
-
 		// 生成材质
 		List<Material> materials = new List<Material>();
 		List<TerrainMap> terrainMaps = terrainData.terrainMaps;
 		for (int i = 0; i < terrainMaps.Count; i++) {
-			Material material = GenerateMap(meshData, terrainMaps[i]);
+			Material material = GenerateMap(value, meshData, terrainMaps[i]);
 			materials.Add(material);
 		}
 		value.meshRenderer.materials = materials.ToArray();
-
 		// 保存数据
 		EditorUtility.SetDirty(terrainData);
 		EditorUtility.SetDirty(value);
@@ -48,14 +45,13 @@ public class TerrainRendererEditor : Editor {
 	}
 
 	/// <summary> 创建地形 </summary>
-	private TerrainMesh GenerateMesh(TerrainData terrainData) {
+	private static TerrainMesh GenerateMesh(TerrainRenderer value, TerrainData terrainData) {
 		// 查找网格数据
 		TerrainMesh meshData = Find<TerrainMesh>(terrainData, value.name);
-		if (meshData == null) {
-			meshData = terrainData.GenerateMesh();
-			meshData.name = value.name;
-			AssetDatabase.AddObjectToAsset(meshData, terrainData);
-		}
+		if (meshData != null) { Undo.DestroyObjectImmediate(meshData); }
+		meshData = terrainData.GenerateMesh();
+		meshData.name = value.name;
+		AssetDatabase.AddObjectToAsset(meshData, terrainData);
 		// 初始网格数据
 		Vector3 position = value.transform.position;
 		TerrainNoise terrainNoise = terrainData.GenerateNoise();
@@ -70,33 +66,25 @@ public class TerrainRendererEditor : Editor {
 		return meshData;
 	}
 	/// <summary> 生成遮罩图 </summary>
-	private Material GenerateMap(TerrainMesh meshData, TerrainMap terrainMap) {
+	private static Material GenerateMap(TerrainRenderer value, TerrainMesh meshData, TerrainMap terrainMap) {
 		// 获得遮罩
 		Texture2D texture = Find<Texture2D>(terrainMap, value.name);
-		if (texture == null) {
-			texture = terrainMap.Get(meshData, texture);
-			texture.name = value.name;
-			AssetDatabase.AddObjectToAsset(texture, terrainMap);
-		}
-		else {
-			terrainMap.Get(meshData, texture);
-		}
+		if (texture != null) { Undo.DestroyObjectImmediate(texture); }
+		texture = terrainMap.Get(meshData, texture);
+		texture.name = value.name;
+		AssetDatabase.AddObjectToAsset(texture, terrainMap);
 		// 获得材质
 		Material material = Find<Material>(terrainMap, value.name);
-		if (material == null) {
-			material = terrainMap.Get(texture, material);
-			material.name = value.name;
-			AssetDatabase.AddObjectToAsset(material, terrainMap);
-		}
-		else {
-			material = terrainMap.Get(texture, material);
-		}
+		if (material != null) { Undo.DestroyObjectImmediate(material); }
+		material = terrainMap.Get(texture, material);
+		material.name = value.name;
+		AssetDatabase.AddObjectToAsset(material, terrainMap);
 		EditorUtility.SetDirty(terrainMap);
 		return material;
 	}
 
 	/// <summary> 资源查找 </summary> 
-	public T Find<T>(UnityEngine.Object assetObject, string name) where T : UnityEngine.Object {
+	public static T Find<T>(UnityEngine.Object assetObject, string name) where T : UnityEngine.Object {
 		// 获取路径
 		string path = AssetDatabase.GetAssetPath(assetObject);
 		// 查找网格
@@ -104,7 +92,7 @@ public class TerrainRendererEditor : Editor {
 		return list.FirstOrDefault(obj => obj.name == name);
 	}
 	/// <summary> 测试时间 </summary> 
-	public void DebugTime(Action action) {
+	public static void DebugTime(Action action) {
 		float startTime = Time.realtimeSinceStartup;
 		action?.Invoke();
 		Debug.Log("Time耗时: " + (Time.realtimeSinceStartup - startTime) * 1000 + " ms");

@@ -38,11 +38,11 @@ public class TerrainData : ScriptableObject {
 
 	/// <summary> 生成噪点 </summary> 
 	public TerrainNoise GenerateNoise() {
-		return new TerrainNoise(frequency, amplitude, noiseScale, octaves);
+		return new TerrainNoise(seed, frequency, amplitude, noiseScale, octaves);
 	}
 	/// <summary> 生成网格 </summary> 
 	public TerrainMesh GenerateMesh() {
-		TerrainMesh meshData = new TerrainMesh();
+		TerrainMesh meshData = CreateInstance(typeof(TerrainMesh)) as TerrainMesh;
 		meshData.Initial(meshSize.x + 1, meshSize.y + 1, meshScale, meshHeight, meshCurve);
 		return meshData;
 	}
