@@ -29,8 +29,6 @@ public class TerrainData : ScriptableObject {
 	public float meshHeight = 200;
 	/// <summary> 曲线 </summary>
 	public AnimationCurve meshCurve;
-	/// <summary> 网格 </summary>
-	// public TerrainMesh terrainMesh;
 
 	[Header("地形图")]
 	/// <summary> 地形图 </summary>

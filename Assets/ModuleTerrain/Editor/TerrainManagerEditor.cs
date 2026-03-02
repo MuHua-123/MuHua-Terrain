@@ -24,7 +24,10 @@ public class TerrainManagerEditor : Editor {
 	/// <summary> 生成 </summary>
 	private void Generate() {
 		// 清除资源
-
+		TerrainDataEditor.ClearAssets(value.terrainData);
+		List<Transform> transforms = new List<Transform>();
+		foreach (Transform item in value.transform) { transforms.Add(item); }
+		transforms.ForEach(obj => DestroyImmediate(obj.gameObject));
 		// 创建地形
 		int wide = value.blockSize.x;
 		int high = value.blockSize.y;
@@ -32,6 +35,7 @@ public class TerrainManagerEditor : Editor {
 			for (int y = 0; y < high; y++)
 				Generate(x, y);
 		// 保存数据
+		TerrainDataEditor.SetDirty(value.terrainData);
 		EditorUtility.SetDirty(value);
 		AssetDatabase.SaveAssets();
 	}
@@ -49,22 +53,6 @@ public class TerrainManagerEditor : Editor {
 		obj.transform.position = position;
 		// 设置数据
 		TerrainRenderer terrainRenderer = obj.AddComponent<TerrainRenderer>();
-		terrainRenderer.terrainData = value.terrainData;
-		TerrainRendererEditor.GenerateTerrain(terrainRenderer);
-	}
-
-	/// <summary> 清除资源 </summary>
-	public static void ClearAssets(Object obj) {
-		// 获取路径
-		string path = AssetDatabase.GetAssetPath(obj);
-		// 查找网格
-		Object[] list = AssetDatabase.LoadAllAssetsAtPath(path);
-		// 删除资源
-		for (int i = 0; i < list.Length; i++) {
-			if (list[i] == obj) { continue; }
-			Undo.DestroyObjectImmediate(list[i]);
-		}
-		EditorUtility.SetDirty(obj);
-		AssetDatabase.SaveAssets();
+		TerrainRendererEditor.GenerateTerrain(terrainRenderer, value.terrainData);
 	}
 }

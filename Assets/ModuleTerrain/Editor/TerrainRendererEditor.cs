@@ -27,59 +27,77 @@ public class TerrainRendererEditor : Editor {
 	public static void GenerateTerrain(TerrainRenderer value) {
 		TerrainData terrainData = value.terrainData;
 		if (terrainData == null) { return; }
-		// 生成网格
-		TerrainMesh meshData = GenerateMesh(value, terrainData);
-		value.meshFilter.mesh = meshData.mesh;
-		// 生成材质
-		List<Material> materials = new List<Material>();
-		List<TerrainMap> terrainMaps = terrainData.terrainMaps;
-		for (int i = 0; i < terrainMaps.Count; i++) {
-			Material material = GenerateMap(value, meshData, terrainMaps[i]);
-			materials.Add(material);
-		}
-		value.meshRenderer.materials = materials.ToArray();
+		// 生成地形渲染器
+		GenerateTerrain(value, terrainData);
 		// 保存数据
-		EditorUtility.SetDirty(terrainData);
-		EditorUtility.SetDirty(value);
+		TerrainDataEditor.SetDirty(terrainData);
 		AssetDatabase.SaveAssets();
 	}
 
+	/// <summary> 生成地形渲染器 </summary>
+	public static void GenerateTerrain(TerrainRenderer value, TerrainData terrainData) {
+		value.terrainData = terrainData;
+		TerrainMesh meshData = GenerateMesh(value, terrainData);
+		value.meshFilter.mesh = meshData.mesh;
+		// 生成材质
+		List<TerrainMap> terrainMaps = terrainData.terrainMaps;
+		var materials = terrainMaps.Select(obj => GenerateMap(value, meshData, obj));
+		value.meshRenderer.materials = materials.ToArray();
+		EditorUtility.SetDirty(value);
+	}
 	/// <summary> 创建地形 </summary>
 	private static TerrainMesh GenerateMesh(TerrainRenderer value, TerrainData terrainData) {
 		// 查找网格数据
-		TerrainMesh meshData = Find<TerrainMesh>(terrainData, value.name);
-		if (meshData != null) { Undo.DestroyObjectImmediate(meshData); }
-		meshData = terrainData.GenerateMesh();
-		meshData.name = value.name;
-		AssetDatabase.AddObjectToAsset(meshData, terrainData);
-		// 初始网格数据
-		Vector3 position = value.transform.position;
-		TerrainNoise terrainNoise = terrainData.GenerateNoise();
-		meshData.Initial(terrainNoise, position);
+		TerrainMesh meshData = GenerateTerrainMesh(value.name, value.transform.position, terrainData);
 		// 生成网格
-		Mesh mesh = Find<Mesh>(terrainData, value.name);
-		if (mesh != null) { Undo.DestroyObjectImmediate(mesh); }
-		mesh = meshData.Get();
-		mesh.name = value.name;
-		AssetDatabase.AddObjectToAsset(mesh, terrainData);
-		EditorUtility.SetDirty(terrainData);
+		GenerateMesh(value.name, meshData, terrainData);
 		return meshData;
 	}
 	/// <summary> 生成遮罩图 </summary>
 	private static Material GenerateMap(TerrainRenderer value, TerrainMesh meshData, TerrainMap terrainMap) {
 		// 获得遮罩
-		Texture2D texture = Find<Texture2D>(terrainMap, value.name);
+		Texture2D texture = GenerateTexture(value.name, meshData, terrainMap);
+		return GenerateMaterial(value.name, texture, terrainMap);
+	}
+
+	/// <summary> 生成地形网格 </summary>
+	public static TerrainMesh GenerateTerrainMesh(string name, Vector3 position, TerrainData terrainData) {
+		// 查找网格数据
+		TerrainMesh meshData = Find<TerrainMesh>(terrainData, name);
+		if (meshData != null) { Undo.DestroyObjectImmediate(meshData); }
+		meshData = terrainData.GenerateMesh();
+		meshData.name = name;
+		AssetDatabase.AddObjectToAsset(meshData, terrainData);
+		// 初始网格数据
+		TerrainNoise terrainNoise = terrainData.GenerateNoise();
+		meshData.Initial(terrainNoise, position);
+		return meshData;
+	}
+	/// <summary> 生成网格 </summary> 
+	public static Mesh GenerateMesh(string name, TerrainMesh meshData, TerrainData terrainData) {
+		Mesh mesh = Find<Mesh>(terrainData, name);
+		if (mesh != null) { Undo.DestroyObjectImmediate(mesh); }
+		mesh = meshData.Get();
+		mesh.name = name;
+		AssetDatabase.AddObjectToAsset(mesh, terrainData);
+		return mesh;
+	}
+	/// <summary> 生成纹理 </summary> 
+	public static Texture2D GenerateTexture(string name, TerrainMesh meshData, TerrainMap terrainMap) {
+		Texture2D texture = Find<Texture2D>(terrainMap, name);
 		if (texture != null) { Undo.DestroyObjectImmediate(texture); }
 		texture = terrainMap.Get(meshData, texture);
-		texture.name = value.name;
+		texture.name = name;
 		AssetDatabase.AddObjectToAsset(texture, terrainMap);
-		// 获得材质
-		Material material = Find<Material>(terrainMap, value.name);
+		return texture;
+	}
+	/// <summary> 生成材质 </summary> 
+	public static Material GenerateMaterial(string name, Texture2D texture, TerrainMap terrainMap) {
+		Material material = Find<Material>(terrainMap, name);
 		if (material != null) { Undo.DestroyObjectImmediate(material); }
 		material = terrainMap.Get(texture, material);
-		material.name = value.name;
+		material.name = name;
 		AssetDatabase.AddObjectToAsset(material, terrainMap);
-		EditorUtility.SetDirty(terrainMap);
 		return material;
 	}
 

@@ -18,11 +18,17 @@ public class TerrainDataEditor : Editor {
 		base.OnInspectorGUI();
 		GUILayout.Space(10); // 增加10像素的空白
 
-		if (GUILayout.Button("清除资源")) { ClearAssets(value); }
+		if (GUILayout.Button("清除资源")) { ClearAssets(value); AssetDatabase.SaveAssets(); }
 	}
 
+	/// <summary> 地形数据标记为脏 </summary>
+	public static void SetDirty(TerrainData terrainData) {
+		EditorUtility.SetDirty(terrainData);
+		List<TerrainMap> terrainMaps = terrainData.terrainMaps;
+		terrainMaps.ForEach(obj => EditorUtility.SetDirty(obj));
+	}
 	/// <summary> 清除资源 </summary>
-	public static void ClearAssets(Object obj) {
+	public static void ClearAssets(TerrainData obj) {
 		// 获取路径
 		string path = AssetDatabase.GetAssetPath(obj);
 		// 查找网格
@@ -33,6 +39,8 @@ public class TerrainDataEditor : Editor {
 			Undo.DestroyObjectImmediate(list[i]);
 		}
 		EditorUtility.SetDirty(obj);
-		AssetDatabase.SaveAssets();
+		// 清除地形图的数据
+		List<TerrainMap> terrainMaps = obj.terrainMaps;
+		terrainMaps.ForEach(map => TerrainMapEditor.ClearAssets(map));
 	}
 }
