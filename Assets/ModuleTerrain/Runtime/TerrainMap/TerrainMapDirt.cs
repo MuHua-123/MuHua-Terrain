@@ -35,16 +35,17 @@ public class TerrainMapDirt : TerrainMap {
 	}
 
 	public override Texture2D Get(TerrainMesh meshData, Texture2D texture = null) {
-		if (texture == null) { texture = new Texture2D(this.wide, this.high); }
+		if (texture == null) { texture = new Texture2D(this.wide, this.high, TextureFormat.R8, true); }
 		int wide = texture.width;
 		int high = texture.height;
 		Color32[] colors = new Color32[wide * high];
 		for (int x = 0; x < wide; x++) {
 			for (int y = 0; y < high; y++)
-				colors[y * wide + x] = new Color(0, 0, 0, 1);
+				colors[y * wide + x] = new Color(1, 0, 0, 0);
 		}
 		texture.SetPixels32(colors);
 		texture.wrapMode = TextureWrapMode.Clamp;
+		texture.Compress(true);
 		texture.Apply();
 		return texture;
 	}

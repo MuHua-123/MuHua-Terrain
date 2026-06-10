@@ -36,7 +36,7 @@ public class TerrainMapGrass : TerrainMap {
 	}
 
 	public override Texture2D Get(TerrainMesh meshData, Texture2D texture = null) {
-		if (texture == null) { texture = new Texture2D(this.wide, this.high); }
+		if (texture == null) { texture = new Texture2D(this.wide, this.high, TextureFormat.R8, true); }
 		int wide = texture.width;
 		int high = texture.height;
 		// 创建数据数组
@@ -59,6 +59,7 @@ public class TerrainMapGrass : TerrainMap {
 		// 写入纹理
 		texture.SetPixels32(colors.ToArray());
 		texture.wrapMode = TextureWrapMode.Clamp;
+		texture.Compress(true);
 		texture.Apply();
 		// 释放内存
 		normals.Dispose();
@@ -96,7 +97,7 @@ public class TerrainMapGrass : TerrainMap {
 			Vector3 n = normals[meshIndex];
 			// 取值
 			float alpha = (n.y - 0.8f) * 8;
-			colors[index] = new Color(0, 0, 0, Mathf.Clamp01(alpha));
+			colors[index] = new Color(Mathf.Clamp01(alpha), 0, 0, 0);
 		}
 	}
 }
